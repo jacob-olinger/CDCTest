@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+
+	<include resource="org/springframework/boot/logging/logback/defaults.xml" />
+
+	<appender name="consoleAppender" class="ch.qos.logback.core.ConsoleAppender">
+		<encoder>
+			<pattern>${CONSOLE_LOG_PATTERN}</pattern>
+		</encoder>
+	</appender>
+
+	<appender name="dailyRollingFileAppender"
+		class="ch.qos.logback.core.rolling.RollingFileAppender">
+		<File>logs/product-discovery-engine.log</File>
+		<rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
+			<!-- daily rollover -->
+			<FileNamePattern>logs/product-discovery-engine.%d{dd-MM-yyyy}.log.gz</FileNamePattern>
+			<!-- keep 7 days' worth of history capped at 100MB total size -->
+			<maxHistory>7</maxHistory>
+			<totalSizeCap>100mb</totalSizeCap>
+		</rollingPolicy>
+		<encoder class="net.logstash.logback.encoder.LogstashEncoder">
+			<customFields>{"app_name":"product-discovery-engine","log_type":"app"}</customFields>
+			<timeZone>UTC</timeZone>
+
+		</encoder>
+	</appender>
+
+	<logger name="com.engati.discovery" level="INFO" additivity="false">
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="dailyRollingFileAppender" />
+	</logger>
+
+	<root level="ERROR">
+		<appender-ref ref="consoleAppender" />
+		<appender-ref ref="dailyRollingFileAppender" />
+	</root>
+
+</configuration>
